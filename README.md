@@ -1,5 +1,7 @@
 # About
 
+[![Build status](https://github.com/rgl/HelloSeleniumWebDriver/workflows/Build/badge.svg)](https://github.com/rgl/HelloSeleniumWebDriver/actions?query=workflow%3ABuild)
+
 This is a C# example that runs Chrome/Selenium inside a Windows container.
 
 ## Caveats
