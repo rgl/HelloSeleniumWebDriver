@@ -30,6 +30,18 @@ namespace HelloSeleniumWebDriver
             public string ScreenshotPath { get; set; }
 
             [Option(
+                "window-size",
+                Default = "800x600",
+                HelpText = "Browser Window size. Note that --window-client-size takes precedence over this value.")]
+            public string WindowSize { get; set; }
+
+            [Option(
+                "window-client-size",
+                Default = "",
+                HelpText = "Browser Window client (or content) size.")]
+            public string WindowClientSize { get; set; }
+
+            [Option(
                 Default="false",
                 HelpText="Run the browser in headless mode")]
             public string Headless { get; set; }
@@ -43,9 +55,20 @@ namespace HelloSeleniumWebDriver
 
         static int Run(Options options)
         {
+            var windowSize = ParseSize(string.IsNullOrEmpty(options.WindowClientSize) ? options.WindowSize : options.WindowClientSize);
+            var windowClientSize = ParseSize(options.WindowClientSize);
+
             // see https://sites.google.com/a/chromium.org/chromedriver/capabilities
             var chromeOptions = new ChromeOptions();
-            chromeOptions.AddArguments("--window-size=800,600");
+
+            if (windowSize.HasValue)
+            {
+                if (!windowClientSize.HasValue)
+                {
+                    Console.WriteLine($"Configuring the window size to {windowSize.Value}...");
+                }
+                chromeOptions.AddArguments($"--window-size={windowSize.Value.Width},{windowSize.Value.Height}");
+            }
 
             // enable headless mode when requested.
             // see https://developers.google.com/web/updates/2017/04/headless-chrome
@@ -62,16 +85,22 @@ namespace HelloSeleniumWebDriver
             service.EnableVerboseLogging = true;
 
             using var wd = new ChromeDriver(service, chromeOptions);
-            var js = (IJavaScriptExecutor)wd;
 
-            // resize the window client size to 800x600.
+            // move the window to the top-left corner.
             wd.Manage().Window.Position = new Point(0, 0);
-            var initialWindowSize = wd.Manage().Window.Size;
-            var initialWindowPadding = (IReadOnlyCollection<object>)js.ExecuteScript("return [window.outerWidth-window.innerWidth, window.outerHeight-window.innerHeight];");
-            wd.Manage().Window.Size = new Size(
-               800 + Convert.ToInt32(initialWindowPadding.ElementAt(0)),
-               600 + Convert.ToInt32(initialWindowPadding.ElementAt(1))
-            );
+
+            // resize the window client size.
+            if (windowClientSize.HasValue)
+            {
+                Console.WriteLine($"Resizing the window client (content) size to {windowClientSize.Value}...");
+                var js = (IJavaScriptExecutor)wd;
+                var initialWindowSize = wd.Manage().Window.Size;
+                var initialWindowPadding = (IReadOnlyCollection<object>)js.ExecuteScript("return [window.outerWidth-window.innerWidth, window.outerHeight-window.innerHeight];");
+                wd.Manage().Window.Size = new Size(
+                    windowClientSize.Value.Width + Convert.ToInt32(initialWindowPadding.ElementAt(0)),
+                    windowClientSize.Value.Height + Convert.ToInt32(initialWindowPadding.ElementAt(1))
+                );
+            }
 
             Console.WriteLine($"Browsing to {options.Url}...");
             wd.Navigate().GoToUrl(options.Url);
@@ -80,6 +109,23 @@ namespace HelloSeleniumWebDriver
             wd.GetScreenshot().SaveAsFile(options.ScreenshotPath, ScreenshotImageFormat.Png);
 
             return 0;
+        }
+
+        private static Size? ParseSize(string value)
+        {
+            if (string.IsNullOrEmpty(value))
+            {
+                return null;
+            }
+
+            var parts = value.Split('x');
+
+            if (parts.Length != 2)
+            {
+                return null;
+            }
+
+            return new Size(int.Parse(parts[0]), int.Parse(parts[1]));
         }
     }
 }
