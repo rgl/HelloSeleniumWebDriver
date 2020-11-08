@@ -19,3 +19,7 @@ Execute `run.ps1` inside a PowerShell session.
 See the contents of the `tmp` directory.
 
 **NB** This was tested in a Windows Server 2019 host. If you are using a different Windows version, you must modify the used container tag inside the [Dockerfile](Dockerfile).
+
+## Alternatives
+
+* [cypress](https://www.cypress.io/)
