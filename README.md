@@ -23,3 +23,5 @@ See the contents of the `tmp` directory.
 ## Alternatives
 
 * [cypress](https://www.cypress.io/)
+* [Playwright](https://playwright.dev/)
+* [Puppeteer](https://pptr.dev/)
