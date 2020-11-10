@@ -4,6 +4,8 @@
 
 This is a C# example that runs Chrome/Selenium inside a Windows container.
 
+Also see the [rgl/HelloSpecFlowSeleniumWebDriver](https://github.com/rgl/HelloSpecFlowSeleniumWebDriver) repository.
+
 ## Caveats
 
 * Chrome only runs inside the [Windows base container image](https://hub.docker.com/_/microsoft-windows) (13.3GB).
