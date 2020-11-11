@@ -8,11 +8,12 @@ RUN Set-ExecutionPolicy -ExecutionPolicy Bypass -Force; `
     choco feature disable -name showDownloadProgress
 # NB there's a big caveat with this package, it will always install the
 #    latest version regardless of the package version because google chrome
-#    does not have a version specific download address.
+#    does not have a version specific download address. and thats why we
+#    also ignore the checksums.
 # TODO switch to chromium, maybe an ungoogled version.
 #      see https://github.com/Hibbiki/chromium-win32
 #      see https://chocolatey.org/packages/chromium/86.0.4240.111#files
-RUN choco install -y GoogleChrome
+RUN choco install -y GoogleChrome --ignore-checksums
 RUN choco install -y chromedriver
 EXPOSE 9515
 ENTRYPOINT ["chromedriver.exe", "--port=9515", "--whitelisted-ips"]
