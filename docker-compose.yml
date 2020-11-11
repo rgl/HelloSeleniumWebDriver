@@ -1,0 +1,22 @@
+# see https://docs.docker.com/compose/overview/
+# see https://docs.docker.com/compose/compose-file/
+version: '3.8'
+services:
+  chrome:
+    build: chrome
+    command:
+      - --verbose
+      - --log-path=c:/host/chromedriver.log
+    volumes:
+      - ./tmp:c:/host
+  tests:
+    build: .
+    depends_on:
+      - chrome
+    command:
+      - --chromedriver-url=http://chrome:9515
+      - --headless=1
+      - --window-client-size=1024x768
+      - --screenshot-path=c:/host/screenshot.png
+    volumes:
+      - ./tmp:c:/host

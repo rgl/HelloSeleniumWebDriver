@@ -14,4 +14,3 @@ jobs:
           name: artifacts
           path: |
             tmp/
-            !tmp/docker-image-id

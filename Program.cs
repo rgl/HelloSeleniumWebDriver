@@ -1,6 +1,7 @@
 using CommandLine;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
+using OpenQA.Selenium.Remote;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -22,6 +23,12 @@ namespace HelloSeleniumWebDriver
                 Default="chromedriver.log",
                 HelpText="chromedriver log path")]
             public string ChromedriverLogPath { get; set; }
+
+            [Option(
+                "chromedriver-url",
+                Default="",
+                HelpText="remote chromedriver url. when used, chromedriver will not be started locally, instead, it will be used remotely.")]
+            public string ChromedriverUrl { get; set; }
 
             [Option(
                 "screenshot-path",
@@ -80,35 +87,52 @@ namespace HelloSeleniumWebDriver
                 chromeOptions.AddArguments("--disable-gpu");
             }
 
-            using var service = ChromeDriverService.CreateDefaultService();
-            service.LogPath = options.ChromedriverLogPath;
-            service.EnableVerboseLogging = true;
+            RemoteWebDriver wd;
 
-            using var wd = new ChromeDriver(service, chromeOptions);
-
-            // move the window to the top-left corner.
-            wd.Manage().Window.Position = new Point(0, 0);
-
-            // resize the window client size.
-            if (windowClientSize.HasValue)
+            if (string.IsNullOrEmpty(options.ChromedriverUrl))
             {
-                Console.WriteLine($"Resizing the window client (content) size to {windowClientSize.Value}...");
-                var js = (IJavaScriptExecutor)wd;
-                var initialWindowSize = wd.Manage().Window.Size;
-                var initialWindowPadding = (IReadOnlyCollection<object>)js.ExecuteScript("return [window.outerWidth-window.innerWidth, window.outerHeight-window.innerHeight];");
-                wd.Manage().Window.Size = new Size(
-                    windowClientSize.Value.Width + Convert.ToInt32(initialWindowPadding.ElementAt(0)),
-                    windowClientSize.Value.Height + Convert.ToInt32(initialWindowPadding.ElementAt(1))
-                );
+                Console.WriteLine("Using local chrome web-driver...");
+
+                var service = ChromeDriverService.CreateDefaultService();
+                service.LogPath = options.ChromedriverLogPath;
+                service.EnableVerboseLogging = true;
+
+                wd = new ChromeDriver(service, chromeOptions);
+            }
+            else
+            {
+                Console.WriteLine($"Using remote chrome web-driver at {options.ChromedriverUrl}...");
+
+                wd = new RemoteWebDriver(new Uri(options.ChromedriverUrl), chromeOptions);
             }
 
-            Console.WriteLine($"Browsing to {options.Url}...");
-            wd.Navigate().GoToUrl(options.Url);
+            using (wd)
+            {
+                // move the window to the top-left corner.
+                Console.WriteLine("Moving the window to the top-left corner of the screen...");
+                wd.Manage().Window.Position = new Point(0, 0);
 
-            Console.WriteLine($"Saving screenshot to {options.ScreenshotPath}...");
-            wd.GetScreenshot().SaveAsFile(options.ScreenshotPath, ScreenshotImageFormat.Png);
+                // resize the window client size.
+                if (windowClientSize.HasValue)
+                {
+                    Console.WriteLine($"Resizing the window client (content) size to {windowClientSize.Value}...");
+                    var js = (IJavaScriptExecutor)wd;
+                    var initialWindowSize = wd.Manage().Window.Size;
+                    var initialWindowPadding = (IReadOnlyCollection<object>)js.ExecuteScript("return [window.outerWidth-window.innerWidth, window.outerHeight-window.innerHeight];");
+                    wd.Manage().Window.Size = new Size(
+                        windowClientSize.Value.Width + Convert.ToInt32(initialWindowPadding.ElementAt(0)),
+                        windowClientSize.Value.Height + Convert.ToInt32(initialWindowPadding.ElementAt(1))
+                    );
+                }
 
-            return 0;
+                Console.WriteLine($"Browsing to {options.Url}...");
+                wd.Navigate().GoToUrl(options.Url);
+
+                Console.WriteLine($"Saving screenshot to {options.ScreenshotPath}...");
+                wd.GetScreenshot().SaveAsFile(options.ScreenshotPath, ScreenshotImageFormat.Png);
+
+                return 0;
+            }
         }
 
         private static Size? ParseSize(string value)
