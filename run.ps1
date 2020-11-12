@@ -88,7 +88,7 @@ rm tmp/*
 # run the tests. then destroy everything.
 try {
 	docker-compose build
-	docker-compose run tests
+	docker-compose run -T tests
 } finally {
 	docker-compose down
 }
