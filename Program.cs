@@ -108,6 +108,12 @@ namespace HelloSeleniumWebDriver
 
             using (wd)
             {
+                // show information about the browser.
+                var browserName = wd.Capabilities.GetCapability("browserName");
+                var browserVersion = wd.Capabilities.GetCapability("browserVersion");
+                var browserPlatform = wd.Capabilities.GetCapability("platformName");
+                Console.WriteLine($"Using {browserName}/{browserVersion} {browserPlatform}");
+
                 // move the window to the top-left corner.
                 Console.WriteLine("Moving the window to the top-left corner of the screen...");
                 wd.Manage().Window.Position = new Point(0, 0);
