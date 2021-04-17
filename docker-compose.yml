@@ -11,9 +11,9 @@ services:
         org.opencontainers.image.description: "${LABEL_IMAGE_DESCRIPTION}"
         org.opencontainers.image.revision: "${LABEL_IMAGE_REVISION}"
     depends_on:
-      - chrome
+      - chromium
     command:
-      - --chromedriver-url=http://chrome:9515
+      - --chromedriver-url=http://chromium:9515
       - --headless=1
       - --window-client-size=1024x768
       - --screenshot-path=c:/host/screenshot.png
@@ -21,9 +21,9 @@ services:
       - ./tmp:c:/host
     labels:
       *labels
-  chrome:
+  chromium:
     build:
-      context: chrome
+      context: chromium
       labels:
         *labels
     command:
