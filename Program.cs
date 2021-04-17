@@ -14,7 +14,7 @@ namespace HelloSeleniumWebDriver
         private class Options
         {
             [Option(
-                Default="https://google.com",
+                Default="https://en.m.wikipedia.org/wiki/Main_Page",
                 HelpText="Web page to open")]
             public string Url { get; set; }
 
@@ -133,6 +133,10 @@ namespace HelloSeleniumWebDriver
 
                 Console.WriteLine($"Browsing to {options.Url}...");
                 wd.Navigate().GoToUrl(options.Url);
+
+                Console.WriteLine($"Waiting for the page to load...");
+                wd.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(15);
+                wd.FindElement(By.CssSelector("#searchInput"));
 
                 Console.WriteLine($"Saving screenshot to {options.ScreenshotPath}...");
                 wd.GetScreenshot().SaveAsFile(options.ScreenshotPath, ScreenshotImageFormat.Png);
