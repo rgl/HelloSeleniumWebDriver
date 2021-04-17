@@ -25,6 +25,34 @@ See the contents of the `tmp` directory.
 
 **NB** This was tested in a Windows Server 2019 host. If you are using a different Windows version, you must modify the used container tag inside the [tests](Dockerfile) and [chrome](chrome/Dockerfile) respective `Dockerfile`.
 
+## Troubleshooting
+
+Start the browser container:
+
+```powershell
+# see https://chromedevtools.github.io/devtools-protocol/
+docker run `
+  --rm `
+  --publish 9222:9222 `
+  --entrypoint 'C:\Program Files\Chromium\Application\chrome.exe' `
+  helloseleniumwebdriver_chromium `
+  --verbose `
+  --headless `
+  --disable-gpu `
+  --remote-debugging-address=0.0.0.0 `
+  --remote-debugging-port=9222
+```
+
+In another shell, open the remote devtool UI in a browser:
+
+```powershell
+# XXX for some reason, this opens https://chrome-devtools-frontend.appspot.com/
+# instead of http://localhost:9222/devtools/inspector.html... why?
+start http://localhost:9222 
+start http://localhost:9222/json/new?https://en.m.wikipedia.org/wiki/Main_Page
+start http://localhost:9222/devtools/inspector.html
+```
+
 ## Alternatives
 
 * [cypress](https://www.cypress.io/)
