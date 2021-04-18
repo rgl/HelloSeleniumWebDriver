@@ -24,7 +24,7 @@ function exec([ScriptBlock]$externalCommand, [string]$stderrPrefix = '', [int[]]
 	try {
 		&$externalCommand 2>&1 | ForEach-Object {
 			if ($_ -is [System.Management.Automation.ErrorRecord]) {
-				"$stderrPrefix$_"
+				"$stderrPrefix$($_.Exception.Message)"
 			} else {
 				"$_"
 			}
