@@ -4,7 +4,10 @@
 
 This is a C# example that runs Chrome/Selenium inside a Windows container.
 
-Also see the [rgl/HelloSpecFlowSeleniumWebDriver](https://github.com/rgl/HelloSpecFlowSeleniumWebDriver) repository.
+Also see:
+
+* [rgl/HelloSpecFlowSeleniumWebDriver](https://github.com/rgl/HelloSpecFlowSeleniumWebDriver).
+* [rgl/hello-puppeteer-windows-container](https://github.com/rgl/hello-puppeteer-windows-container).
 
 ## Caveats
 
