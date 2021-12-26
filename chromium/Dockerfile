@@ -8,7 +8,7 @@ RUN Set-ExecutionPolicy -ExecutionPolicy Bypass -Force; `
     choco feature disable -name showDownloadProgress
 # TODO maybe use an ungoogled version.
 #      see https://github.com/Hibbiki/chromium-win32
-RUN choco install -y chromium --version 86.0.4240.198
-RUN choco install -y chromedriver --version 86.0.4240.220
+RUN choco install -y chromium --version 96.0.4664.93
+RUN choco install -y chromedriver --version 96.0.4664.450
 EXPOSE 9515
 ENTRYPOINT ["chromedriver.exe", "--port=9515", "--whitelisted-ips"]

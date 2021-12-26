@@ -3,3 +3,5 @@ bin/
 obj/
 tmp/
 Dockerfile
+*.log
+*.png

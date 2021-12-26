@@ -87,7 +87,7 @@ namespace HelloSeleniumWebDriver
                 chromeOptions.AddArguments("--disable-gpu");
             }
 
-            RemoteWebDriver wd;
+            WebDriver wd;
 
             if (string.IsNullOrEmpty(options.ChromedriverUrl))
             {
